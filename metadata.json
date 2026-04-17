@@ -1,0 +1,6 @@
+{
+  "name": "BingeWise",
+  "description": "Get personalized movie and TV show recommendations based on your watch history, ratings, and streaming subscriptions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

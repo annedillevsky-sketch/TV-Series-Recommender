@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Auth helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // User Profile Rules
+    match /users/{userId} {
+      function isValidProfile(data) {
+        return data.keys().hasAll(['watchedShows', 'streamingApps', 'ageRating', 'contentType', 'updatedAt'])
+               && data.watchedShows is list
+               && data.streamingApps is list
+               && data.ageRating is string
+               && data.contentType is string
+               && data.updatedAt == request.time;
+      }
+
+      allow get: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidProfile(request.resource.data);
+
+      // Watchlist Rules
+      match /watchlist/{itemId} {
+        function isValidWatchlistItem(data) {
+          return data.keys().hasAll(['id', 'title', 'type', 'addedAt'])
+                 && data.id is string
+                 && data.title is string
+                 && data.type in ['Movie', 'TV Show']
+                 && data.addedAt == request.time;
+        }
+
+        allow list, get: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(itemId) && isValidWatchlistItem(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

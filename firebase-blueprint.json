@@ -1,0 +1,50 @@
+{
+  "entities": {
+    "user_profiles": {
+      "title": "User Profile",
+      "description": "Stores user preferences and current state",
+      "type": "object",
+      "properties": {
+        "watchedShows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "rating": { "type": "number" }
+            }
+          }
+        },
+        "streamingApps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ageRating": { "type": "string" },
+        "contentType": { "type": "string" },
+        "updatedAt": { "type": "number" }
+      }
+    },
+    "watchlist": {
+      "title": "Watchlist Item",
+      "description": "An item the user wants to watch later",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "addedAt": { "type": "number" }
+      }
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "user_profiles",
+      "description": "User specific metadata and preferences"
+    },
+    "users/{userId}/watchlist/{itemId}": {
+      "schema": "watchlist",
+      "description": "Items in the user's watchlist"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-bg: #0A0B0E;
+  --color-brand-sidebar: #14161B;
+  --color-brand-surface: #1D2128;
+  --color-brand-accent: #E50914;
+  --color-brand-success: #4ADE80;
+  --color-brand-gold: #E2B616;
+  --color-brand-border: #222222;
+  --color-brand-border-light: #333333;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-[#E0E0E0] font-sans antialiased selection:bg-brand-accent selection:text-white;
+  }
+}
+
+@layer utilities {
+  .section-title {
+    @apply text-[10px] uppercase tracking-[0.1em] text-[#666] mb-5 block font-bold;
+  }
+
+  .geometric-card {
+    @apply bg-brand-surface border border-brand-border-light rounded-[4px] p-3 transition-all;
+  }
+
+  .pill {
+    @apply bg-brand-surface border border-brand-border-light text-[#AAA] px-3 py-2 rounded-[20px] text-[11px] text-center transition-all;
+  }
+
+  .pill-active {
+    @apply border-brand-accent bg-[#2A1416] text-white;
+  }
+
+  .main-gradient {
+    background: radial-gradient(circle at top right, #1A1D23 0%, #0A0B0E 70%);
+  }
+}
