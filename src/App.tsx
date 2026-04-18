@@ -92,6 +92,7 @@ export default function App() {
   const handleFetchRecommendations = async () => {
     setLoading(true);
     setStep(4);
+    setRecommendations([]); // Clear old matches
     try {
       const prefs: UserPreferences = {
         watchedShows: shows,
@@ -100,9 +101,16 @@ export default function App() {
         contentType,
       };
       const data = await getRecommendations(prefs);
-      setRecommendations(data);
+      console.log("Recommendations received:", data);
+      if (data && data.length > 0) {
+        setRecommendations(data);
+      } else {
+        // Force an empty array so the error UI shows
+        setRecommendations([]);
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Fetch Recommendations Error:", error);
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }
@@ -166,12 +174,8 @@ export default function App() {
 
   const reset = () => {
     setStep(1);
-    setIsAnimating(false);
     setRecommendations([]);
   };
-
-  // For nice entrance animations in the main display
-  const [isAnimating, setIsAnimating] = useState(false);
 
   if (authLoading) {
     return (
@@ -186,11 +190,11 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col lg:flex-row overflow-hidden border-brand-border">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row overflow-x-hidden border-brand-border">
       {/* Sidebar: Inputs & Configuration */}
       <aside className={cn(
         "bg-brand-sidebar border-brand-border flex flex-col transition-all duration-500",
-        "w-full lg:w-[380px] lg:border-r h-full overflow-y-auto p-6 lg:p-10",
+        "w-full lg:w-[380px] lg:border-r min-h-screen lg:h-screen lg:sticky lg:top-0 overflow-y-auto p-6 lg:p-10",
         (recommendations.length > 0 || loading) && "hidden lg:flex"
       )}>
         <div className="flex-grow space-y-6 lg:space-y-10">
@@ -342,8 +346,9 @@ export default function App() {
 
       {/* Main Display: Results & Hero */}
       <main className={cn(
-        "flex-1 main-gradient relative p-8 lg:p-16 overflow-y-auto",
-        (recommendations.length === 0 && !loading) && "hidden lg:block"
+        "flex-1 main-gradient relative p-8 lg:p-16 min-h-screen lg:h-screen lg:overflow-y-auto",
+        (recommendations.length === 0 && !loading) && "hidden lg:block",
+        (recommendations.length > 0 || loading) && "block"
       )}>
         {(recommendations.length > 0 || loading) && (
           <button 

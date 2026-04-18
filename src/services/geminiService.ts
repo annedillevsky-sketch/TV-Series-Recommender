@@ -59,9 +59,17 @@ export async function getRecommendations(prefs: UserPreferences): Promise<Recomm
 
   try {
     const data = JSON.parse(response.text || "[]");
-    return data;
+    
+    // Safety check: ensure it's an array and has the required fields
+    if (!Array.isArray(data)) {
+      console.warn("Gemini returned non-array data:", data);
+      return [];
+    }
+    
+    // Filter out invalid recommendations
+    return data.filter(rec => rec && rec.title && rec.reason);
   } catch (e) {
-    console.error("Failed to parse recommendations", e);
+    console.error("Failed to parse Gemini recommendations. Raw response:", response.text, e);
     return [];
   }
 }
